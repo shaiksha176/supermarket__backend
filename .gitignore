@@ -1,0 +1,55 @@
+# Node.js
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+
+# Dependency directory for Yarn
+.yarn/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# Configuration files
+config/
+
+# Built or compiled files
+build/
+dist/
+*.pid
+*.out
+
+# npm package files
+package-lock.json
+npm-debug.log
+
+# Mac OS Finder folder attributes
+Icon?
+ehthumbs.db
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Visual Studio Code settings
+.vscode/
+
+# Node Inspector config
+.node-inspector/
+
+# Grunt log files
+logs/
+
+# Grunt binary and related files
+node_modules/
