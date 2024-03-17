@@ -1,92 +1,84 @@
 import express from "express";
+import { Customer } from "../models/customer.js";
 const router = express.Router();
 
-// Sample in-memory database
-const customers = [];
-
 // Get all customers
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(customers);
+    const customer = await Customer.find();
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found." });
+    }
+    res.status(200).json(customer);
   } catch (error) {
     next(error);
   }
 });
 
 // Get a specific product by ID
-router.get("/:id", (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
-    const productId = req.params.id;
-    const product = customers.find((p) => p.id === productId);
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found." });
     }
-
-    res.json(product);
+    res.status(200).json(customer);
   } catch (error) {
-    next(error);
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Failed to retrieve customer information." });
   }
 });
 
 // Create a new product
-router.post("/", (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
-    const newCustomer = {
-      id: Date.now().toString(),
-      ...customerData,
-    };
-    customers.push(newCustomer);
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
 
-    res
-      .status(201)
-      .json({ message: "Product created successfully", product: newProduct });
+    // Create a new customer instance
+    const newCustomer = new Customer({
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
+    });
+
+    // Save the new customer to the database
+    const savedCustomer = await newCustomer.save();
+
+    res.status(201).json(savedCustomer);
   } catch (error) {
     next(error);
   }
 });
 
 // Update a product by ID
-router.put("/:id", (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   try {
-    const productId = req.params.id;
-    const productIndex = customers.findIndex((p) => p.id === productId);
-
-    if (productIndex === -1) {
-      return res.status(404).json({ message: "Product not found" });
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+    if (!updatedCustomer) {
+      return res.status(404).json({ message: "Customer not found." });
     }
-
-    const updatedProduct = {
-      id: productId,
-      name: req.body.name,
-      price: req.body.price,
-      // other product properties...
-    };
-
-    customers[productIndex] = updatedProduct;
-
-    res.json({
-      message: "Product updated successfully",
-      product: updatedProduct,
-    });
+    res.status(200).json(updatedCustomer);
   } catch (error) {
     next(error);
   }
 });
 
 // Delete a product by ID
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
-    const productId = req.params.id;
-    const productIndex = customers.findIndex((p) => p.id === productId);
-
-    if (productIndex === -1) {
-      return res.status(404).json({ message: "Product not found" });
+    const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
+    if (!deletedCustomer) {
+      return res.status(404).json({ message: "Customer not found." });
     }
-
-    customers.splice(productIndex, 1);
-
-    res.json({ message: "Product deleted successfully" });
+    res.status(204).end(); // No content (successful deletion)
   } catch (error) {
     next(error);
   }
