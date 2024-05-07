@@ -1,6 +1,22 @@
 import express from "express";
+import multer from "multer";
+import AWS from "aws-sdk";
 import { Product } from "../models/product.js";
+import path from "path";
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Create a folder named 'uploads' in your project directory
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname),
+    );
+  },
+});
+const upload = multer({ storage });
 
 // Get all products
 router.get("/", async (req, res, next) => {
@@ -27,7 +43,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // Create a new product
-router.post("/", async (req, res, next) => {
+router.post("/", upload.single("image"), async (req, res, next) => {
   try {
     const {
       name,
@@ -35,9 +51,10 @@ router.post("/", async (req, res, next) => {
       category,
       price,
       quantityInStock,
-      imageURL,
       manufacturer,
     } = req.body;
+
+    console.log(req.files);
 
     // Create a new product instance
     const newProduct = new Product({
@@ -46,7 +63,6 @@ router.post("/", async (req, res, next) => {
       category,
       price,
       quantityInStock,
-      imageURL,
       manufacturer,
     });
 

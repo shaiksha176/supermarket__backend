@@ -128,5 +128,31 @@ router.delete("/customer/:customerId", async (req, res) => {
     res.status(500).json({ message: "Failed to delete orders" });
   }
 });
+
+router.get("/customer/:customerId", async (req, res) => {
+  const customerId = req.params.customerId;
+
+  try {
+    // Find all orders where the customer ID matches
+    const orders = await Order.find({ customer: customerId }).populate(
+      "items.product",
+    );
+
+    if (orders.length === 0) {
+      // If no orders found for the customer ID
+      return res
+        .status(404)
+        .json({ message: "No orders found for the customer ID" });
+    }
+
+    // If orders found, return them
+    res.json(orders);
+  } catch (error) {
+    // If an error occurs during database query
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // Export the router
 export default router;

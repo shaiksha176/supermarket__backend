@@ -15,12 +15,20 @@ router.post("/login", async (req, res, next) => {
 
     // Find the customer by email
     const existingCustomer = await Customer.findOne({ email });
-
+    console.log("existingCustomer: ", existingCustomer);
     if (!existingCustomer) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid email or password" });
     }
+
+    // Check the password
+    if (existingCustomer.password !== password) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+
     // Generate a JWT token for authentication
     const token = jwt.sign(
       { customerId: existingCustomer._id },
