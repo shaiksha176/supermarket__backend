@@ -10,6 +10,7 @@ import errorMiddleware from "./middleware/error.js";
 import customerRouter from "./routes/customer.js";
 import orderRouter from "./routes/orders.js";
 import categoryRouter from "./routes/category.js";
+import fs from 'fs'
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -20,6 +21,39 @@ AWS.config.update({
   secretAccessKey: process.env.SECRET_KEY,
   region: process.env.AWS_REGION,
 });
+
+
+let  s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+// const params = {
+//   Bucket: process.env.BUCKET_NAME,
+//   Prefix: 'fruits/' // Specify the folder name here, leave empty to list all objects in the bucket
+// };
+// // Call S3 to list the buckets
+// s3.listObjects(params, function (err, data) {
+//   if (err) {
+//     console.log("Error", err);
+//   } else {
+//     console.log("Success", data);
+//   }
+// });
+
+// const fileContent = fs.readFileSync('uploads/image-1715505138805.jpg');
+
+// // Define S3 upload parameters
+// const params = {
+//   Bucket: process.env.BUCKET_NAME,
+//   Key: 'fruits/image2.jpg', // Specify the folder name and file name
+//   Body: fileContent
+// };
+
+// // Upload the image to S3
+// s3.upload(params, function(err, data) {
+//   if (err) {
+//     console.log('Error uploading image:', err);
+//   } else {
+//     console.log('Image uploaded successfully. S3 location:', data.Location);
+//   }
+// });
 
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,

@@ -84,6 +84,8 @@ router.get("/:id", async (req, res) => {
 
 // Route to update an order by ID
 router.put("/:id", async (req, res) => {
+  console.log("ID ",req.params.id);
+  console.log("Payload ",req.body)
   try {
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,

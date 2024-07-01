@@ -53,3 +53,5 @@ logs/
 
 # Grunt binary and related files
 node_modules/
+
+uploads/
